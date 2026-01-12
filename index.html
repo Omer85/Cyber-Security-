@@ -4,12 +4,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>CyberShield | KKU Workshop</title>
+    <title>CyberShield | Security Lab</title>
     
     <!-- Meta Tags -->
     <meta name="theme-color" content="#020617" />
-    <meta name="description" content="Cyber Security Training - King Khalid University" />
-    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/ar/d/d1/Logo_KKU.png" />
+    <meta name="description" content="Cyber Security Training Laboratory" />
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -76,16 +75,18 @@
   </head>
   <body>
     <div id="app-loader">
-      <img src="https://upload.wikimedia.org/wikipedia/ar/d/d1/Logo_KKU.png" style="width: 60px; opacity: 0.8;" />
+      <div class="p-4 rounded-2xl bg-blue-600/10 border border-blue-500/20">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
       <div class="loader-bar"><div class="loader-progress"></div></div>
       <div style="margin-top: 15px; font-family: 'JetBrains Mono'; font-size: 8px; color: #475569; letter-spacing: 0.2em; text-transform: uppercase;">
-        Initializing Security Node
+        Initializing Secure Terminal
       </div>
     </div>
 
     <div id="root"></div>
 
-    <!-- Relative path module import for GitHub compatibility -->
+    <!-- Ensure relative path for GitHub Pages subfolder support -->
     <script type="module" src="./index.tsx"></script>
 
     <script>
@@ -95,7 +96,7 @@
           setTimeout(() => {
             loader.style.opacity = '0';
             setTimeout(() => loader.style.display = 'none', 500);
-          }, 1000);
+          }, 800);
         }
       });
     </script>
