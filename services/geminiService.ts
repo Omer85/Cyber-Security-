@@ -1,7 +1,9 @@
-
 import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
 
-const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
+const getAI = () => {
+  const apiKey = process.env.API_KEY || "";
+  return new GoogleGenAI({ apiKey });
+};
 
 export const analyzeLog = async (logData: string): Promise<string> => {
   const ai = getAI();
@@ -20,7 +22,7 @@ export const chatWithAI = async (message: string) => {
   const chat = ai.chats.create({
     model: 'gemini-3-flash-preview',
     config: {
-      systemInstruction: `You are the 'CyberShield Elite' mentor for Computer Engineering students at King Khalid University. Professional and technical.`,
+      systemInstruction: `You are the 'CyberShield Elite' mentor. You provide professional and technical security guidance.`,
     },
   });
 
