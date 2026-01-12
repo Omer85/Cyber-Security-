@@ -104,8 +104,8 @@ const App: React.FC = () => {
                  <Icons.Shield className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">CyberShield Academy</h1>
-                <p className="text-blue-400 text-xs font-mono uppercase tracking-widest">Security Training Laboratory</p>
+                <h1 className="text-2xl font-bold text-white tracking-tight">Computer Engineering</h1>
+                <p className="text-blue-400 text-xs font-mono uppercase tracking-widest">Dr. Omer Elsier Tayfour's Security Lab</p>
               </div>
             </div>
             
@@ -132,10 +132,10 @@ const App: React.FC = () => {
           <footer className="mt-8 pt-8 border-t border-slate-900 text-slate-600 text-[10px] flex justify-between items-center pb-8">
             <div className="flex items-center gap-3">
               <Icons.Shield className="w-4 h-4" />
-              <p className="uppercase font-bold tracking-tighter">CyberShield Laboratory © 2024</p>
+              <p className="uppercase font-bold tracking-tighter">Computer Engineering Lab © 2024</p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-mono uppercase px-2 py-0.5 bg-slate-900 rounded border border-slate-800">Production Node: Active</span>
+              <span className="font-mono uppercase px-2 py-0.5 bg-slate-900 rounded border border-slate-800">Faculty Lead: Dr. Omer Elsier Tayfour</span>
               <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
             </div>
           </footer>

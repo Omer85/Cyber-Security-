@@ -18,7 +18,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeModule, setActiveModule }) => {
   ];
 
   return (
-    <aside className="w-64 bg-slate-900 h-screen sticky top-0 border-r border-slate-800 p-6 flex flex-col">
+    <aside className="w-64 bg-slate-900 h-screen sticky top-0 border-r border-slate-800 p-6 flex flex-col shrink-0">
       <div className="flex flex-col items-center gap-4 mb-10">
         <div className="flex items-center gap-2 mt-2">
            <div className="p-3 bg-blue-600 rounded-xl shadow-lg shadow-blue-900/40">
@@ -41,19 +41,19 @@ const Sidebar: React.FC<SidebarProps> = ({ activeModule, setActiveModule }) => {
             }`}
           >
             {item.icon}
-            <span className="font-medium">{item.label}</span>
+            <span className="font-medium text-sm">{item.label}</span>
           </button>
         ))}
       </nav>
 
       <div className="mt-auto pt-6 border-t border-slate-800 space-y-4">
         <div className="flex items-center gap-3 p-2 bg-slate-800/50 rounded-xl border border-slate-700/50">
-          <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold border-2 border-slate-600 shrink-0">
-            SE
+          <div className="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400 font-bold border-2 border-blue-500/30 shrink-0">
+            OT
           </div>
           <div className="flex flex-col overflow-hidden">
-            <span className="text-[13px] font-bold text-white leading-tight truncate">Lead Security Engineer</span>
-            <span className="text-[10px] text-blue-400 font-mono uppercase mt-1">Status: Online</span>
+            <span className="text-[11px] font-bold text-white leading-tight truncate">Dr. Omer Elsier Tayfour</span>
+            <span className="text-[9px] text-blue-400 font-mono uppercase mt-1">Computer Engineering</span>
           </div>
         </div>
         
