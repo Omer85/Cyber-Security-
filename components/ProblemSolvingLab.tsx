@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Icons } from '../constants';
 
@@ -18,7 +17,7 @@ const challenges: Challenge[] = [
   {
     id: 1,
     title: "The Flat Network Crisis",
-    scenario: "A medium-sized KKU department has all its workstations, the web server, and the research database on the same VLAN (192.168.1.0/24). A student's laptop in the lab was infected with Ransomware.",
+    scenario: "A medium-sized engineering department has all its workstations, the web server, and the research database on the same VLAN (192.168.1.0/24). A student's laptop in the lab was infected with Ransomware.",
     flaw: "Lack of network segmentation allows the ransomware to spread laterally to the research database via simple SMB scanning.",
     options: [
       {
@@ -41,7 +40,7 @@ const challenges: Challenge[] = [
   {
     id: 2,
     title: "Exposed API Endpoint",
-    scenario: "An engineering project uses an API to report sensor data to a cloud database. The API key is currently hardcoded in the frontend JavaScript code of the dashboard.",
+    scenario: "A senior engineering project uses an API to report sensor data to a cloud database. The API key is currently hardcoded in the frontend JavaScript code of the dashboard.",
     flaw: "Anyone who views the source code of the dashboard can steal the API key and delete or modify research data.",
     options: [
       {
@@ -183,7 +182,7 @@ const ProblemSolvingLab: React.FC = () => {
          <div>
            <h4 className="font-bold text-blue-400 mb-1">Problem Solving Methodology</h4>
            <p className="text-xs text-slate-400 leading-relaxed">
-             In computer engineering, we don't just 'patch' problems. We look for the root cause in the system architecture. When solving these challenges, ask yourself: <em>Is this fix scalable? Does it adhere to the principle of Least Privilege? Does it eliminate the entire class of vulnerability?</em>
+             In security engineering, we don't just 'patch' symptoms. We identify root causes in architecture. When solving these challenges, ask: <em>Is this fix scalable? Does it adhere to the principle of Least Privilege? Does it eliminate the entire class of vulnerability?</em>
            </p>
          </div>
       </div>

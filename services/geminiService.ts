@@ -1,7 +1,8 @@
 import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
 
 const getAI = () => {
-  const apiKey = process.env.API_KEY || "";
+  // Use globalThis cast to satisfy TS without Node types
+  const apiKey = (globalThis as any).process?.env?.API_KEY || "";
   return new GoogleGenAI({ apiKey });
 };
 
@@ -40,6 +41,7 @@ export const generateQuizQuestion = async (topic: string): Promise<any> => {
       responseSchema: {
         type: Type.OBJECT,
         properties: {
+          id: { type: Type.INTEGER, description: 'Unique question identifier' },
           question: { type: Type.STRING },
           options: {
             type: Type.ARRAY,
@@ -50,13 +52,14 @@ export const generateQuizQuestion = async (topic: string): Promise<any> => {
           correctAnswer: { type: Type.INTEGER },
           explanation: { type: Type.STRING }
         },
-        required: ['question', 'options', 'correctAnswer', 'explanation']
+        required: ['id', 'question', 'options', 'correctAnswer', 'explanation']
       }
     }
   });
   
   try {
-    return JSON.parse(response.text?.trim() || '{}');
+    const text = response.text;
+    return JSON.parse(text?.trim() || '{}');
   } catch (e) {
     console.error("Quiz parsing error:", e);
     return null;
