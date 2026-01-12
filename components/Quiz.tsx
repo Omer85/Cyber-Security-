@@ -17,14 +17,19 @@ const Quiz: React.FC = () => {
     setIsCorrect(null);
     
     try {
-      const data = await generateQuizQuestion("Advanced Network Exploits & Mitigation");
-      if (data && data.question && Array.isArray(data.options)) {
+      const data = await generateQuizQuestion("Network Defense Architecture & Cryptography");
+      if (data && data.question && Array.isArray(data.options) && data.options.length >= 4) {
         setQuestion(data);
       } else {
-        setError("The assessment node returned a malformed challenge. Please try again.");
+        setError("DATA_MALFORMED: The assessment engine returned an invalid data structure. Please retry.");
       }
-    } catch (e) {
-      setError("The assessment node is currently unresponsive. Ensure your lab session is authenticated.");
+    } catch (e: any) {
+      if (e.message?.includes("API Key Missing")) {
+        setError("AUTH_FAILURE: Lab API credentials not found in environment. Contact your administrator.");
+      } else {
+        setError("NODE_UNRESPONSIVE: The assessment gateway is experiencing high latency or downtime.");
+      }
+      console.error("Quiz Fetch Error:", e);
     } finally {
       setLoading(false);
     }
@@ -49,24 +54,24 @@ const Quiz: React.FC = () => {
           <div className="w-12 h-12 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
           <div className="absolute inset-0 w-12 h-12 border-4 border-blue-500/10 rounded-full"></div>
         </div>
-        <p className="text-slate-400 font-mono text-sm mt-6 animate-pulse">GENERATING ENGINEERING CHALLENGE...</p>
+        <p className="text-slate-400 font-mono text-[10px] mt-6 animate-pulse tracking-widest uppercase">Initializing Assessment Matrix...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-96 bg-slate-900 rounded-2xl border border-slate-800 p-8 text-center">
-        <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4 border border-red-500/20">
-          <span className="text-2xl">⚠️</span>
+      <div className="flex flex-col items-center justify-center h-96 bg-slate-900 rounded-2xl border border-slate-800 p-8 text-center animate-in fade-in zoom-in duration-300">
+        <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20">
+          <span className="text-2xl animate-pulse">⚠️</span>
         </div>
-        <h4 className="text-white font-bold mb-2">Assessment Terminal Offline</h4>
-        <p className="text-slate-400 mb-8 max-w-sm text-sm">{error}</p>
+        <h4 className="text-white font-bold mb-2">Terminal Error</h4>
+        <p className="text-slate-400 mb-8 max-w-sm text-xs font-mono">{error}</p>
         <button 
           onClick={fetchQuestion} 
-          className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-900/20 transition-all active:scale-95"
+          className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[10px] font-bold shadow-lg shadow-blue-900/40 transition-all active:scale-95 uppercase tracking-widest"
         >
-          REBOOT TERMINAL
+          Reboot Assessment Node
         </button>
       </div>
     );
@@ -79,9 +84,9 @@ const Quiz: React.FC = () => {
       <div className="flex justify-between items-center mb-8 pb-4 border-b border-slate-800">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-          <span className="bg-blue-600/10 text-blue-400 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Expert Assessment</span>
+          <span className="bg-blue-600/10 text-blue-400 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Engineering Assessment</span>
         </div>
-        <span className="text-slate-500 font-mono text-sm tracking-tighter">SUCCESS_INDEX: <span className="text-blue-400 font-bold">{(score * 100).toString().padStart(3, '0')}</span></span>
+        <span className="text-slate-500 font-mono text-xs tracking-tighter">SUCCESS_PTS: <span className="text-blue-400 font-bold">{(score * 10).toString().padStart(3, '0')}</span></span>
       </div>
 
       <h3 className="text-lg font-bold mb-8 text-white leading-relaxed">{question.question}</h3>
@@ -115,18 +120,18 @@ const Quiz: React.FC = () => {
       {selected !== null && (
         <div className="animate-in fade-in slide-in-from-top-4 duration-500 pt-4 border-t border-slate-800 mt-8">
           <div className={`p-6 rounded-xl border mb-6 ${isCorrect ? 'bg-green-950/20 border-green-500/20' : 'bg-red-950/20 border-red-500/20'}`}>
-            <h4 className={`font-bold mb-2 flex items-center gap-2 text-xs uppercase tracking-widest ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
+            <h4 className={`font-bold mb-2 flex items-center gap-2 text-[10px] uppercase tracking-widest ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
               <span className={`w-1.5 h-1.5 rounded-full ${isCorrect ? 'bg-green-500' : 'bg-red-500'}`}></span>
-              {isCorrect ? 'Technical Validation Successful' : 'Analysis Incomplete'}
+              {isCorrect ? 'Technical Validation Successful' : 'Security Breach - Analysis Incomplete'}
             </h4>
-            <p className="text-slate-400 text-sm leading-relaxed italic">{question.explanation}</p>
+            <p className="text-slate-400 text-xs leading-relaxed italic">{question.explanation}</p>
           </div>
           <div className="flex justify-center">
             <button 
               onClick={fetchQuestion}
-              className="px-10 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-xl shadow-blue-900/40 transform hover:scale-105 active:scale-95"
+              className="px-10 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-xl shadow-blue-900/40 transform hover:scale-105 active:scale-95 uppercase tracking-widest"
             >
-              NEXT CHALLENGE
+              Continue to Next Module
             </button>
           </div>
         </div>
