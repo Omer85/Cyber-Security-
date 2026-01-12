@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { chatWithAI, analyzeLog } from '../services/geminiService';
 import { ChatMessage } from '../types';
@@ -28,16 +27,21 @@ const AILab: React.FC = () => {
 
     try {
       let responseText: string;
-      // Trigger log analysis if specifically requested or if it looks like a large log block
       if (isManualLog || (userMsg.length > 100 && (userMsg.includes('GET') || userMsg.includes('POST') || userMsg.includes('IP')))) {
         responseText = await analyzeLog(userMsg);
       } else {
-        responseText = await chatWithAI(userMsg) || "Neural link interrupted. Please try again.";
+        responseText = await chatWithAI(userMsg);
       }
       
       setMessages(prev => [...prev, { role: 'model', text: responseText }]);
-    } catch (error) {
-      setMessages(prev => [...prev, { role: 'model', text: "CRITICAL ERROR: Failed to communicate with security node. Verify API credentials." }]);
+    } catch (error: any) {
+      let errorMsg = "COMMUNICATION FAILURE: Failed to link with forensic node.";
+      if (error.message?.includes("API Key Missing")) {
+        errorMsg = "AUTH ERROR: Lab API Key not detected. Ensure your environment variables are configured correctly.";
+      } else if (error.status === 429) {
+        errorMsg = "QUOTA EXCEEDED: The laboratory has reached its AI limit for this period.";
+      }
+      setMessages(prev => [...prev, { role: 'model', text: errorMsg }]);
     } finally {
       setIsLoading(false);
     }
@@ -51,7 +55,7 @@ const AILab: React.FC = () => {
             <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
             <div className="absolute inset-0 w-3 h-3 bg-blue-500 rounded-full animate-ping"></div>
           </div>
-          <span className="font-bold tracking-tight">AI FORRENSIC MENTOR</span>
+          <span className="font-bold tracking-tight">AI FORENSIC MENTOR</span>
         </div>
         <div className="flex items-center gap-4">
           <span className="text-[10px] text-slate-500 font-mono hidden sm:inline">SECURITY LEVEL: TOP SECRET</span>

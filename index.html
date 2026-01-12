@@ -61,9 +61,15 @@
       }
     </style>
 
-    <!-- Polyfill process.env for browser environments -->
+    <!-- Robust Non-Destructive Polyfill for process.env -->
     <script>
-      window.process = window.process || { env: { API_KEY: "" } };
+      (function() {
+        window.process = window.process || {};
+        window.process.env = window.process.env || {};
+        if (typeof window.process.env.API_KEY === 'undefined') {
+          window.process.env.API_KEY = "";
+        }
+      })();
     </script>
 
     <script type="importmap">

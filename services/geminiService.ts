@@ -1,29 +1,42 @@
 import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
 
-const getAI = () => {
-  const apiKey = (globalThis as any).process?.env?.API_KEY || "";
-  if (!apiKey) {
-    console.error("API_KEY is missing in process.env");
-  }
-  return new GoogleGenAI({ apiKey });
-};
-
 /**
- * Helper to strip markdown formatting if the model returns it
+ * Robust JSON extraction from LLM response.
+ * Handles cases with leading/trailing text or markdown backticks.
  */
 const extractJson = (text: string) => {
+  if (!text) return null;
+  const trimmed = text.trim();
   try {
-    const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
-    return JSON.parse(cleanText);
+    return JSON.parse(trimmed);
   } catch (e) {
-    console.error("Failed to parse JSON from AI response:", text);
+    try {
+      const startBracket = Math.min(
+        trimmed.indexOf('{') === -1 ? Infinity : trimmed.indexOf('{'),
+        trimmed.indexOf('[') === -1 ? Infinity : trimmed.indexOf('[')
+      );
+      const endBracket = Math.max(
+        trimmed.lastIndexOf('}'),
+        trimmed.lastIndexOf(']')
+      );
+
+      if (startBracket !== Infinity && endBracket !== -1) {
+        const jsonBody = trimmed.substring(startBracket, endBracket + 1);
+        return JSON.parse(jsonBody);
+      }
+    } catch (innerError) {
+      console.error("Fuzzy JSON extraction failed:", innerError);
+    }
     return null;
   }
 };
 
 export const analyzeLog = async (logData: string): Promise<string> => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) throw new Error("API Key Missing");
+
   try {
-    const ai = getAI();
+    const ai = new GoogleGenAI({ apiKey });
     const response: GenerateContentResponse = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
       contents: `As a Lead SOC Analyst for Dr. Omer Elsier Tayfour's Computer Engineering Lab, perform a deep forensic analysis of the following raw network log. Identify attack vectors, IPs, remediation steps, and severity level. Log Data: ${logData}`,
@@ -31,43 +44,49 @@ export const analyzeLog = async (logData: string): Promise<string> => {
         thinkingConfig: { thinkingBudget: 32768 }, 
       }
     });
-    return response.text || "Forensic node returned empty response.";
-  } catch (error) {
-    console.error("AnalyzeLog Error:", error);
-    return "Forensic Analysis failed. This usually occurs if the AI quota is exceeded or the log content triggered a safety filter.";
+    return response.text || "No analysis generated.";
+  } catch (error: any) {
+    console.error("Forensic Analysis Error:", error);
+    throw error;
   }
 };
 
 export const chatWithAI = async (message: string) => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) throw new Error("API Key Missing");
+
   try {
-    const ai = getAI();
+    const ai = new GoogleGenAI({ apiKey });
     const chat = ai.chats.create({
       model: 'gemini-3-flash-preview',
       config: {
-        systemInstruction: `You are the 'CyberShield Elite' mentor in Dr. Omer Elsier Tayfour's Computer Engineering Lab. Provide professional, academic, and technical security guidance.`,
+        systemInstruction: `You are the 'CyberShield Elite' mentor in Dr. Omer Elsier Tayfour's Computer Engineering Lab. Provide professional, academic, and technical security guidance. Focus on Computer Engineering principles.`,
       },
     });
 
     const response = await chat.sendMessage({ message });
-    return response.text;
-  } catch (error) {
-    console.error("Chat Error:", error);
-    return "Communication link unstable. Please ensure you are asking security-related questions.";
+    return response.text || "No response received.";
+  } catch (error: any) {
+    console.error("Neural Chat Error:", error);
+    throw error;
   }
 };
 
 export const generateQuizQuestion = async (topic: string): Promise<any> => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) throw new Error("API Key Missing");
+
   try {
-    const ai = getAI();
+    const ai = new GoogleGenAI({ apiKey });
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `Create a difficult multiple-choice scenario-based question about ${topic} for engineering students.`,
+      contents: `Generate a challenging multiple-choice network security question for the Computer Engineering lab. Topic: ${topic}.`,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
           properties: {
-            id: { type: Type.INTEGER, description: 'Unique question identifier' },
+            id: { type: Type.INTEGER },
             question: { type: Type.STRING },
             options: {
               type: Type.ARRAY,
@@ -75,7 +94,7 @@ export const generateQuizQuestion = async (topic: string): Promise<any> => {
               minItems: 4,
               maxItems: 4
             },
-            correctAnswer: { type: Type.INTEGER, description: 'Zero-based index of the correct answer' },
+            correctAnswer: { type: Type.INTEGER, description: 'Zero-based index' },
             explanation: { type: Type.STRING }
           },
           required: ['id', 'question', 'options', 'correctAnswer', 'explanation']
@@ -83,9 +102,9 @@ export const generateQuizQuestion = async (topic: string): Promise<any> => {
       }
     });
     
-    return extractJson(response.text || "{}");
-  } catch (e) {
-    console.error("Quiz generation error:", e);
-    return null;
+    return extractJson(response.text);
+  } catch (e: any) {
+    console.error("Quiz Generation Error:", e);
+    throw e;
   }
 };
