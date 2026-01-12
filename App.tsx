@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import ModuleHeader from './components/ModuleHeader';
 import ModuleCard from './components/ModuleCard';
@@ -19,6 +19,23 @@ const App: React.FC = () => {
   const [completedModules, setCompletedModules] = useState<Set<ModuleType>>(new Set([ModuleType.BASICS]));
   const [showShareModal, setShowShareModal] = useState(false);
   const [copyStatus, setCopyStatus] = useState<'none' | 'link' | 'embed'>('none');
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  // PWA Install Logic
+  useEffect(() => {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    });
+  }, []);
+
+  const handleInstall = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') setDeferredPrompt(null);
+    }
+  };
 
   const progress = useMemo(() => {
     return Math.round((completedModules.size / Object.keys(ModuleType).length) * 100);
@@ -143,15 +160,15 @@ const App: React.FC = () => {
       <div className="flex h-full bg-slate-950 text-slate-100 selection:bg-blue-500/30">
         <Sidebar activeModule={activeModule} setActiveModule={setActiveModule} />
         <main className="flex-1 p-8 lg:p-12 overflow-y-auto">
-          <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-16">
+          <header className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-16">
             <div className="flex gap-6 items-start">
-              <div className="p-3 bg-white rounded-xl shadow-lg shadow-white/5 shrink-0 hidden md:block">
+              <div className="p-3 bg-white rounded-xl shadow-lg shadow-white/5 shrink-0 hidden md:block group hover:rotate-2 transition-transform">
                  <Icons.KKULogo className="w-16 h-auto" />
               </div>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-                  <span className="text-slate-500 font-bold uppercase text-[10px] tracking-[0.2em]">Live Academic Environment | KKU</span>
+                  <span className="text-slate-500 font-bold uppercase text-[10px] tracking-[0.2em]">Academic Infrastructure | Vercel Node</span>
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold tracking-tight text-white mb-1">
@@ -160,30 +177,40 @@ const App: React.FC = () => {
                   <div className="flex flex-wrap items-center gap-2 text-blue-400 font-medium">
                     <span className="text-sm">College of Computer Science</span>
                     <span className="h-4 w-px bg-slate-800 mx-2"></span>
-                    <span className="text-xs font-mono uppercase tracking-widest bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">CyberShield Workshop</span>
+                    <span className="text-xs font-mono uppercase tracking-widest bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">CyberShield v2.5</span>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-3">
+              {deferredPrompt && (
+                <button 
+                  onClick={handleInstall}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-blue-600 bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-900/40"
+                >
+                  <Icons.Shield />
+                  Install App
+                </button>
+              )}
+
               <button 
                 onClick={() => setShowShareModal(true)}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-slate-300 font-bold text-sm hover:text-white hover:border-slate-600 transition-all shadow-lg"
               >
                 <Icons.Share />
-                Frame & Share
+                Deploy & Frame
               </button>
 
               <div className="flex items-center gap-6 bg-slate-900/50 border border-slate-800 p-2 pl-4 rounded-2xl">
                  <div className="flex flex-col items-end">
-                   <span className="text-[10px] text-slate-500 font-bold uppercase">Class Progress</span>
+                   <span className="text-[10px] text-slate-500 font-bold uppercase">Class Sync</span>
                    <span className="text-sm font-mono font-bold text-blue-400">{progress}%</span>
                  </div>
                  <div className="h-10 w-px bg-slate-800"></div>
                  <div className="flex -space-x-2">
                    {[1,2,3,4].map(n => (
-                     <div key={n} className="w-8 h-8 rounded-full border-2 border-slate-950 bg-slate-800 overflow-hidden">
+                     <div key={n} className="w-8 h-8 rounded-full border-2 border-slate-950 bg-slate-800 overflow-hidden grayscale hover:grayscale-0 transition-all cursor-help">
                        <img src={`https://api.dicebear.com/7.x/identicon/svg?seed=${n * 23 + 55}`} alt="trainee" />
                      </div>
                    ))}
@@ -197,12 +224,16 @@ const App: React.FC = () => {
             {renderContent()}
           </div>
 
-          <footer className="mt-24 pt-12 border-t border-slate-900 text-slate-600 text-xs flex flex-col md:flex-row justify-between items-center gap-6">
+          <footer className="mt-24 pt-12 border-t border-slate-900 text-slate-600 text-xs flex flex-col md:flex-row justify-between items-center gap-6 pb-12">
             <div className="flex items-center gap-4">
               <div className="p-1.5 bg-slate-900 rounded border border-slate-800">
                  <Icons.Shield />
               </div>
-              <p>© 2024 Jahzia Workshop - College of Computer Science | King Khalid University. Facilitated by Dr. Omer Elsier Tayfour.</p>
+              <p>© 2024 Jahzia Workshop - College of Computer Science | King Khalid University.</p>
+            </div>
+            <div className="flex gap-4">
+              <span className="px-2 py-1 bg-green-500/10 text-green-500 rounded font-mono text-[9px] border border-green-500/20 uppercase">Environment: Stable</span>
+              <span className="px-2 py-1 bg-slate-800 text-slate-400 rounded font-mono text-[9px] border border-slate-700 uppercase">Version 2.5.0-PRO</span>
             </div>
           </footer>
         </main>
@@ -210,22 +241,22 @@ const App: React.FC = () => {
 
       {/* Share Modal */}
       {showShareModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-sm bg-black/60">
-          <div className="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-sm bg-black/60" onClick={() => setShowShareModal(false)}>
+          <div className="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
             <div className="p-8 border-b border-slate-800">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-2xl font-bold text-white">Workshop Framing</h3>
+                <h3 className="text-2xl font-bold text-white">Application Deployment</h3>
                 <button onClick={() => setShowShareModal(false)} className="text-slate-500 hover:text-white">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
                 </button>
               </div>
-              <p className="text-slate-400 text-sm">Deploy this workshop to your department portal or share the direct link with students.</p>
+              <p className="text-slate-400 text-sm">Convert this web project into a standalone engineering lab for students.</p>
             </div>
             
             <div className="p-8 space-y-6">
               {/* Option 1: Link */}
               <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase text-slate-500 tracking-widest">Direct Deployment Link</label>
+                <label className="text-[10px] font-bold uppercase text-slate-500 tracking-widest">Global Web Link</label>
                 <div className="flex gap-2">
                   <div className="flex-1 bg-slate-950 border border-slate-800 px-4 py-3 rounded-xl text-xs font-mono text-slate-400 truncate">
                     {window.location.href}
@@ -243,11 +274,11 @@ const App: React.FC = () => {
 
               {/* Option 2: Embed */}
               <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase text-slate-500 tracking-widest">LMS Embed Code (Iframe Frame)</label>
+                <label className="text-[10px] font-bold uppercase text-slate-500 tracking-widest">Native Iframe Wrapper (LMS Frame)</label>
                 <div className="relative">
                   <textarea 
                     readOnly
-                    value={`<iframe src="${window.location.href}" width="100%" height="800px"></iframe>`}
+                    value={`<iframe src="${window.location.href}" width="100%" height="800px" style="border:none; border-radius:12px; overflow:hidden;"></iframe>`}
                     className="w-full bg-slate-950 border border-slate-800 p-4 rounded-xl text-[10px] font-mono text-blue-400 h-20 resize-none"
                   />
                   <button 
@@ -257,16 +288,16 @@ const App: React.FC = () => {
                     {copyStatus === 'embed' ? 'Copied Embed!' : 'Copy Code'}
                   </button>
                 </div>
-                <p className="text-[10px] text-slate-500 italic">Use this code to embed the workshop inside Blackboard or Moodle.</p>
+                <p className="text-[10px] text-slate-500 italic">This allows you to "frame" the app inside King Khalid University's internal portals.</p>
               </div>
             </div>
 
-            <div className="bg-slate-950 p-6 flex justify-center">
+            <div className="bg-slate-950 p-6 flex justify-center border-t border-slate-800/50">
               <button 
                 onClick={() => setShowShareModal(false)}
                 className="text-slate-500 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors"
               >
-                Close Panel
+                Dismiss Panel
               </button>
             </div>
           </div>

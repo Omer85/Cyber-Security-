@@ -1,0 +1,21 @@
+
+{
+  "short_name": "CyberShield",
+  "name": "CyberShield: Network Security Workshop",
+  "icons": [
+    {
+      "src": "https://upload.wikimedia.org/wikipedia/ar/d/d1/Logo_KKU.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://upload.wikimedia.org/wikipedia/ar/d/d1/Logo_KKU.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#020617",
+  "background_color": "#020617"
+}
