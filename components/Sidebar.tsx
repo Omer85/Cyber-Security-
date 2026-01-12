@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ModuleType } from '../types';
 import { Icons } from '../constants';
@@ -21,15 +20,13 @@ const Sidebar: React.FC<SidebarProps> = ({ activeModule, setActiveModule }) => {
   return (
     <aside className="w-64 bg-slate-900 h-screen sticky top-0 border-r border-slate-800 p-6 flex flex-col">
       <div className="flex flex-col items-center gap-4 mb-10">
-        <div className="w-full p-4 bg-white rounded-2xl shadow-xl flex items-center justify-center">
-          <Icons.KKULogo className="w-32 h-auto" />
-        </div>
         <div className="flex items-center gap-2 mt-2">
-           <div className="p-2 bg-blue-600 rounded-xl shadow-lg shadow-blue-900/40">
-             <Icons.Shield />
+           <div className="p-3 bg-blue-600 rounded-xl shadow-lg shadow-blue-900/40">
+             <Icons.Shield className="text-white" />
            </div>
            <h1 className="text-xl font-bold tracking-tight text-white">CyberShield</h1>
         </div>
+        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-[0.2em]">Lab Terminal v2.5</span>
       </div>
       
       <nav className="space-y-2 flex-1">
@@ -51,21 +48,21 @@ const Sidebar: React.FC<SidebarProps> = ({ activeModule, setActiveModule }) => {
 
       <div className="mt-auto pt-6 border-t border-slate-800 space-y-4">
         <div className="flex items-center gap-3 p-2 bg-slate-800/50 rounded-xl border border-slate-700/50">
-          <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold border-2 border-blue-400 shrink-0">
-            OT
+          <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold border-2 border-slate-600 shrink-0">
+            SE
           </div>
           <div className="flex flex-col overflow-hidden">
-            <span className="text-[13px] font-bold text-white leading-tight truncate">Dr. Omer Elsier Tayfour</span>
-            <span className="text-[10px] text-blue-400 font-mono uppercase mt-1">Teacher / Professor</span>
+            <span className="text-[13px] font-bold text-white leading-tight truncate">Lead Security Engineer</span>
+            <span className="text-[10px] text-blue-400 font-mono uppercase mt-1">Status: Online</span>
           </div>
         </div>
         
         <div className="bg-slate-800 rounded-xl p-4">
-          <p className="text-xs text-slate-500 uppercase font-bold mb-2">Class Progress</p>
+          <p className="text-xs text-slate-500 uppercase font-bold mb-2">Module Progress</p>
           <div className="w-full bg-slate-700 h-2 rounded-full mb-2">
             <div className="bg-blue-500 h-full rounded-full w-2/5"></div>
           </div>
-          <p className="text-xs text-slate-400">40% Average</p>
+          <p className="text-xs text-slate-400">40% Complete</p>
         </div>
       </div>
     </aside>

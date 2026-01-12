@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import Sidebar from './components/Sidebar';
 import ModuleHeader from './components/ModuleHeader';
@@ -106,13 +105,13 @@ const App: React.FC = () => {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-white">CyberShield Academy</h1>
-                <p className="text-blue-400 text-xs font-mono uppercase tracking-widest">Advanced Security Workshop Lab</p>
+                <p className="text-blue-400 text-xs font-mono uppercase tracking-widest">Security Training Laboratory</p>
               </div>
             </div>
             
             <div className="flex items-center gap-4 bg-slate-900/50 border border-slate-800 p-2 px-4 rounded-xl shadow-inner">
                <div className="flex flex-col items-end">
-                 <span className="text-[10px] text-slate-500 font-bold uppercase">Lab Progress</span>
+                 <span className="text-[10px] text-slate-500 font-bold uppercase">Progress</span>
                  <span className="text-sm font-mono font-bold text-blue-400">{progress}%</span>
                </div>
                <div className="h-8 w-px bg-slate-800 mx-2"></div>

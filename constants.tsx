@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 export const COLORS = {
@@ -27,12 +26,6 @@ export const Icons = {
       </defs>
       <path d="M255.153 37.938L134.897 252.976c-2.483 4.44-8.862 4.466-11.382.048L.854 37.358c-2.53-4.43.744-9.867 5.834-9.712l243.312 7.425c5.092.155 7.64 5.756 5.153 10.867z" fill="url(#a)"/>
       <path d="M195.127 7.271L132.808 179.45c-2.418 4.674-9.144 4.64-11.514-.059L63.508 7.03c-2.399-4.757 1.03-10.212 6.355-10.154l118.885 1.257c5.356.056 8.745 5.536 6.379 10.138z" fill="url(#b)"/>
-    </svg>
-  ),
-  // Add missing KKULogo icon used in components/Sidebar.tsx
-  KKULogo: ({ className = "" }: { className?: string }) => (
-    <svg viewBox="0 0 200 60" className={className} xmlns="http://www.w3.org/2000/svg">
-      <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontSize="24" fontWeight="bold" fill="#1e293b" fontFamily="system-ui">KKU</text>
     </svg>
   ),
   Shield: ({ className = "" }: { className?: string }) => (
