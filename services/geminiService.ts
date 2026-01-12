@@ -7,17 +7,15 @@ import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
 const extractJson = (text: string) => {
   if (!text) return null;
   
-  // 1. First attempt: Standard parse after trimming
   const trimmed = text.trim();
   try {
     return JSON.parse(trimmed);
   } catch (e) {
-    // 2. Second attempt: Strip common markdown and try again
+    // Strip common markdown markers
     const clean = trimmed.replace(/```json/g, '').replace(/```/g, '').trim();
     try {
       return JSON.parse(clean);
     } catch (e2) {
-      // 3. Final attempt: Fuzzy find brackets
       const startBracket = Math.min(
         clean.indexOf('{') === -1 ? Infinity : clean.indexOf('{'),
         clean.indexOf('[') === -1 ? Infinity : clean.indexOf('[')
@@ -41,7 +39,7 @@ const extractJson = (text: string) => {
 };
 
 export const analyzeLog = async (logData: string): Promise<string> => {
-  const apiKey = (globalThis as any).process?.env?.API_KEY || process.env.API_KEY;
+  const apiKey = process.env.API_KEY;
   if (!apiKey) throw new Error("API Key Missing");
 
   try {
@@ -61,7 +59,7 @@ export const analyzeLog = async (logData: string): Promise<string> => {
 };
 
 export const chatWithAI = async (message: string) => {
-  const apiKey = (globalThis as any).process?.env?.API_KEY || process.env.API_KEY;
+  const apiKey = process.env.API_KEY;
   if (!apiKey) throw new Error("API Key Missing");
 
   try {
@@ -82,7 +80,7 @@ export const chatWithAI = async (message: string) => {
 };
 
 export const generateQuizQuestion = async (topic: string): Promise<any> => {
-  const apiKey = (globalThis as any).process?.env?.API_KEY || process.env.API_KEY;
+  const apiKey = process.env.API_KEY;
   if (!apiKey) throw new Error("API Key Missing");
 
   try {

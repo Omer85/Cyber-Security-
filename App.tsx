@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import ModuleHeader from './components/ModuleHeader';
 import ModuleCard from './components/ModuleCard';
@@ -16,6 +16,36 @@ import { Icons } from './constants';
 const App: React.FC = () => {
   const [activeModule, setActiveModule] = useState<ModuleType>(ModuleType.BASICS);
   const [completedModules] = useState<Set<ModuleType>>(new Set([ModuleType.BASICS]));
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [hasApiKey, setHasApiKey] = useState(!!process.env.API_KEY);
+
+  useEffect(() => {
+    // Periodically check if API key has been injected or selected
+    const checkKey = () => {
+      if (process.env.API_KEY) {
+        setHasApiKey(true);
+      }
+    };
+    const interval = setInterval(checkKey, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleAuthenticate = async () => {
+    if ((window as any).aistudio) {
+      try {
+        setIsAuthenticating(true);
+        await (window as any).aistudio.openSelectKey();
+        // Instruction: Assume successful selection and proceed
+        setHasApiKey(true);
+      } catch (err) {
+        console.error("Authentication failed:", err);
+      } finally {
+        setIsAuthenticating(false);
+      }
+    } else {
+      alert("AI Studio environment not detected. Ensure you are running this in a compatible AI development lab.");
+    }
+  };
 
   const progress = useMemo(() => {
     return Math.round((completedModules.size / Object.keys(ModuleType).length) * 100);
@@ -92,6 +122,52 @@ const App: React.FC = () => {
         return null;
     }
   };
+
+  if (!hasApiKey) {
+    return (
+      <BrowserFrame>
+        <div className="h-full bg-slate-950 flex items-center justify-center p-6">
+          <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-10 shadow-2xl text-center">
+            <div className="mb-8 flex justify-center">
+              <div className="p-4 bg-blue-600 rounded-2xl shadow-xl shadow-blue-900/40 animate-bounce">
+                <Icons.Shield className="w-10 h-10 text-white" />
+              </div>
+            </div>
+            <h1 className="text-2xl font-bold text-white mb-4 tracking-tight">Departmental Terminal Login</h1>
+            <p className="text-slate-400 text-sm mb-10 leading-relaxed">
+              Dr. Omer Elsier Tayfour's laboratory requires active AI credentials to authenticate your session. Please connect your departmental API key to begin the workshop.
+            </p>
+            <button
+              onClick={handleAuthenticate}
+              disabled={isAuthenticating}
+              className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm tracking-widest uppercase shadow-lg shadow-blue-900/40 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3"
+            >
+              {isAuthenticating ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                  Authenticating...
+                </>
+              ) : (
+                <>
+                  Authenticate Terminal
+                  <Icons.Code className="w-4 h-4" />
+                </>
+              )}
+            </button>
+            <div className="mt-8 pt-8 border-t border-slate-800">
+              <a 
+                href="https://ai.google.dev/gemini-api/docs/billing" 
+                target="_blank" 
+                className="text-[10px] text-blue-400 hover:underline uppercase font-bold tracking-widest"
+              >
+                Billing Documentation & Key Setup
+              </a>
+            </div>
+          </div>
+        </div>
+      </BrowserFrame>
+    );
+  }
 
   return (
     <BrowserFrame>
