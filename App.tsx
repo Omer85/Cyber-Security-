@@ -7,9 +7,9 @@ import SecurityVisualizer from './components/SecurityVisualizer';
 import FaultTree from './components/FaultTree';
 import MalwareShowcase from './components/MalwareShowcase';
 import ProblemSolvingLab from './components/ProblemSolvingLab';
+import BrowserFrame from './components/BrowserFrame';
 import AILab from './components/AILab';
 import Quiz from './components/Quiz';
-import BrowserFrame from './components/BrowserFrame';
 import { ModuleType } from './types';
 import { Icons } from './constants';
 
@@ -77,14 +77,14 @@ const App: React.FC = () => {
       case ModuleType.AI_LAB:
         return (
           <div className="space-y-8 animate-in fade-in duration-500">
-            <ModuleHeader title="AI Forensic Laboratory" description="Real-time log analysis and threat modeling with Gemini intelligence." />
+            <ModuleHeader title="Forensic AI Lab" description="Interact with our custom-trained AI mentor for deep log analysis." />
             <AILab />
           </div>
         );
       case ModuleType.QUIZ:
         return (
           <div className="space-y-8 animate-in fade-in duration-500">
-            <ModuleHeader title="Field Competency Exam" description="Validate your security expertise with interactive challenges." />
+            <ModuleHeader title="Skills Assessment" description="Test your knowledge on cybersecurity principles and engineering." />
             <Quiz />
           </div>
         );

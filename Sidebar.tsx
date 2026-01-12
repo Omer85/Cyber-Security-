@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { ModuleType } from '../types';
-import { Icons } from '../constants';
+import { ModuleType } from './types';
+import { Icons } from './constants';
 
 interface SidebarProps {
   activeModule: ModuleType;
@@ -49,12 +49,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activeModule, setActiveModule }) => {
 
       <div className="mt-auto pt-6 border-t border-slate-800 space-y-4">
         <div className="flex items-center gap-3 p-2 bg-slate-800/50 rounded-xl border border-slate-700/50">
-          <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold border-2 border-slate-600 shrink-0">
-            SE
+          <div className="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400 font-bold border-2 border-blue-500/30 shrink-0">
+            OT
           </div>
           <div className="flex flex-col overflow-hidden">
-            <span className="text-[13px] font-bold text-white leading-tight truncate">Lead Security Engineer</span>
-            <span className="text-[10px] text-blue-400 font-mono uppercase mt-1">Status: Online</span>
+            <span className="text-[11px] font-bold text-white leading-tight truncate">Dr. Omer Elsier Tayfour</span>
+            <span className="text-[9px] text-blue-400 font-mono uppercase mt-1">Computer Engineering</span>
           </div>
         </div>
         
@@ -63,7 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeModule, setActiveModule }) => {
           <div className="w-full bg-slate-700 h-2 rounded-full mb-2">
             <div className="bg-blue-500 h-full rounded-full w-2/5"></div>
           </div>
-          <p className="text-xs text-slate-400">40% Complete</p>
+          <p className="text-xs text-slate-400">Progress Tracked</p>
         </div>
       </div>
     </aside>

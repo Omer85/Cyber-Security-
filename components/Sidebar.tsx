@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ModuleType } from '../types';
 import { Icons } from '../constants';
@@ -62,7 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeModule, setActiveModule }) => {
           <div className="w-full bg-slate-700 h-2 rounded-full mb-2">
             <div className="bg-blue-500 h-full rounded-full w-2/5"></div>
           </div>
-          <p className="text-xs text-slate-400">40% Complete</p>
+          <p className="text-xs text-slate-400">Progress Tracked</p>
         </div>
       </div>
     </aside>
