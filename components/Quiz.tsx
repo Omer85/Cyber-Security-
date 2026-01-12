@@ -10,13 +10,6 @@ const Quiz: React.FC = () => {
   const [score, setScore] = useState(0);
   const [error, setError] = useState<{ code: string; message: string } | null>(null);
 
-  const handleReauth = async () => {
-    if ((window as any).aistudio) {
-      await (window as any).aistudio.openSelectKey();
-      fetchQuestion();
-    }
-  };
-
   const fetchQuestion = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -31,11 +24,8 @@ const Quiz: React.FC = () => {
         setError({ code: 'MALFORMED', message: "Data packet corrupted. Retrying..." });
       }
     } catch (e: any) {
-      if (e.message === "AUTH_REQUIRED" || e.status === 401 || e.message?.includes("entity was not found")) {
-        setError({ code: 'AUTH', message: "Assessment Terminal Offline: Lab credentials missing or expired." });
-      } else {
-        setError({ code: 'SERVER', message: "Communication Node Unresponsive. Check network link." });
-      }
+      setError({ code: 'SERVER', message: "Assessment Node Unresponsive. Ensure laboratory network connectivity." });
+      console.error("Quiz Fetch Error:", e);
     } finally {
       setLoading(false);
     }
@@ -68,25 +58,14 @@ const Quiz: React.FC = () => {
         <div className="w-12 h-12 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20">
           <span className="text-xl">⚠️</span>
         </div>
-        <h4 className="text-white font-bold mb-2">Terminal Failure</h4>
+        <h4 className="text-white font-bold mb-2">Node Offline</h4>
         <p className="text-slate-400 mb-8 max-w-xs text-xs font-mono">{error.message}</p>
-        <div className="flex gap-3">
-          {error.code === 'AUTH' ? (
-            <button 
-              onClick={handleReauth} 
-              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all shadow-lg shadow-blue-900/40 uppercase tracking-widest"
-            >
-              Authenticate Terminal
-            </button>
-          ) : (
-            <button 
-              onClick={fetchQuestion} 
-              className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold transition-all border border-slate-700 uppercase tracking-widest"
-            >
-              Reboot Matrix
-            </button>
-          )}
-        </div>
+        <button 
+          onClick={fetchQuestion} 
+          className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all shadow-lg shadow-blue-900/40 uppercase tracking-widest"
+        >
+          Retry Connection
+        </button>
       </div>
     );
   }

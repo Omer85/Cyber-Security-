@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
 import Sidebar from './components/Sidebar';
 import ModuleHeader from './components/ModuleHeader';
 import ModuleCard from './components/ModuleCard';
@@ -16,43 +16,6 @@ import { Icons } from './constants';
 const App: React.FC = () => {
   const [activeModule, setActiveModule] = useState<ModuleType>(ModuleType.BASICS);
   const [completedModules] = useState<Set<ModuleType>>(new Set([ModuleType.BASICS]));
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
-  const [hasApiKey, setHasApiKey] = useState(!!process.env.API_KEY && process.env.API_KEY !== "");
-
-  const checkAuthStatus = useCallback(async () => {
-    const aiStudio = (window as any).aistudio;
-    if (aiStudio && typeof aiStudio.hasSelectedApiKey === 'function') {
-      const selected = await aiStudio.hasSelectedApiKey();
-      if (selected && process.env.API_KEY && process.env.API_KEY !== "") {
-        setHasApiKey(true);
-      }
-    } else if (process.env.API_KEY && process.env.API_KEY !== "") {
-      setHasApiKey(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    checkAuthStatus();
-    const interval = setInterval(checkAuthStatus, 2000);
-    return () => clearInterval(interval);
-  }, [checkAuthStatus]);
-
-  const handleAuthenticate = async () => {
-    if ((window as any).aistudio) {
-      try {
-        setIsAuthenticating(true);
-        await (window as any).aistudio.openSelectKey();
-        // Assume success to prevent race condition blocks
-        setHasApiKey(true);
-      } catch (err) {
-        console.error("Auth process interrupted:", err);
-      } finally {
-        setIsAuthenticating(false);
-      }
-    } else {
-      alert("Terminal environment error: AI Studio component missing.");
-    }
-  };
 
   const progress = useMemo(() => {
     return Math.round((completedModules.size / Object.keys(ModuleType).length) * 100);
@@ -129,43 +92,6 @@ const App: React.FC = () => {
         return null;
     }
   };
-
-  if (!hasApiKey) {
-    return (
-      <BrowserFrame>
-        <div className="h-full bg-slate-950 flex items-center justify-center p-6">
-          <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-10 shadow-2xl text-center">
-            <div className="mb-8 flex justify-center">
-              <div className="p-4 bg-blue-600 rounded-2xl shadow-xl shadow-blue-900/40 animate-pulse">
-                <Icons.Shield className="w-10 h-10 text-white" />
-              </div>
-            </div>
-            <h1 className="text-2xl font-bold text-white mb-4 tracking-tight">Terminal Authentication</h1>
-            <p className="text-slate-400 text-sm mb-10 leading-relaxed">
-              Dr. Omer Elsier Tayfour's Computer Engineering laboratory requires valid credentials to connect to the AI forensic network.
-            </p>
-            <button
-              onClick={handleAuthenticate}
-              disabled={isAuthenticating}
-              className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm tracking-widest uppercase shadow-lg shadow-blue-900/40 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3"
-            >
-              {isAuthenticating ? "Synchronizing..." : "Connect Departmental Key"}
-            </button>
-            <div className="mt-8 pt-8 border-t border-slate-800">
-              <a 
-                href="https://ai.google.dev/gemini-api/docs/billing" 
-                target="_blank" 
-                rel="noreferrer"
-                className="text-[10px] text-blue-400 hover:underline uppercase font-bold tracking-widest"
-              >
-                Key Setup & Billing Info
-              </a>
-            </div>
-          </div>
-        </div>
-      </BrowserFrame>
-    );
-  }
 
   return (
     <BrowserFrame>

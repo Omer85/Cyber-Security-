@@ -34,20 +34,9 @@ const extractJson = (text: string) => {
   return null;
 };
 
-// Helper to throw a standardized Auth error
-const getAiInstance = () => {
-  const apiKey = process.env.API_KEY;
-  if (!apiKey || apiKey === "") {
-    const error = new Error("AUTH_REQUIRED");
-    (error as any).status = 401;
-    throw error;
-  }
-  return new GoogleGenAI({ apiKey });
-};
-
 export const analyzeLog = async (logData: string): Promise<string> => {
   try {
-    const ai = getAiInstance();
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response: GenerateContentResponse = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
       contents: `As a Lead SOC Analyst for Dr. Omer Elsier Tayfour's Computer Engineering Lab, perform a deep forensic analysis of the following raw network log. Identify attack vectors, IPs, remediation steps, and severity level. Log Data: ${logData}`,
@@ -64,7 +53,7 @@ export const analyzeLog = async (logData: string): Promise<string> => {
 
 export const chatWithAI = async (message: string) => {
   try {
-    const ai = getAiInstance();
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const chat = ai.chats.create({
       model: 'gemini-3-flash-preview',
       config: {
@@ -81,7 +70,7 @@ export const chatWithAI = async (message: string) => {
 
 export const generateQuizQuestion = async (topic: string): Promise<any> => {
   try {
-    const ai = getAiInstance();
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: `Generate a challenging security quiz question for the Computer Engineering lab on: ${topic}.`,
