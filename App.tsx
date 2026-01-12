@@ -10,16 +10,32 @@ import MalwareShowcase from './components/MalwareShowcase';
 import ProblemSolvingLab from './components/ProblemSolvingLab';
 import AILab from './components/AILab';
 import Quiz from './components/Quiz';
+import BrowserFrame from './components/BrowserFrame';
 import { ModuleType } from './types';
-import { Icons, COLORS } from './constants';
+import { Icons } from './constants';
 
 const App: React.FC = () => {
   const [activeModule, setActiveModule] = useState<ModuleType>(ModuleType.BASICS);
   const [completedModules, setCompletedModules] = useState<Set<ModuleType>>(new Set([ModuleType.BASICS]));
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [copyStatus, setCopyStatus] = useState<'none' | 'link' | 'embed'>('none');
 
   const progress = useMemo(() => {
     return Math.round((completedModules.size / Object.keys(ModuleType).length) * 100);
   }, [completedModules]);
+
+  const handleCopyLink = async () => {
+    await navigator.clipboard.writeText(window.location.href);
+    setCopyStatus('link');
+    setTimeout(() => setCopyStatus('none'), 2000);
+  };
+
+  const handleCopyEmbed = async () => {
+    const embedCode = `<iframe src="${window.location.href}" width="100%" height="800px" style="border:none; border-radius:12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" allow="camera; microphone; geolocation;"></iframe>`;
+    await navigator.clipboard.writeText(embedCode);
+    setCopyStatus('embed');
+    setTimeout(() => setCopyStatus('none'), 2000);
+  };
 
   const completeModule = (module: ModuleType) => {
     setCompletedModules(prev => new Set([...Array.from(prev), module]));
@@ -65,78 +81,16 @@ const App: React.FC = () => {
                 <FaultTree />
               </div>
             </div>
-
-            <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-8 mt-6">
-               <h3 className="text-lg font-bold text-white mb-4">The Engineering Mindset</h3>
-               <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                 For Computer Engineering students, understanding security is about analyzing systems as complex state machines. Both the Cyber Kill Chain (attacker's view) and Fault Tree Analysis (engineer's view) are critical for building secure systems.
-               </p>
-               <button 
-                  onClick={() => completeModule(ModuleType.THREATS)}
-                  className="px-6 py-2 bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 border border-blue-600/30 rounded-lg text-sm font-bold transition-all"
-                >
-                  Mark Basics as Complete →
-                </button>
-            </div>
           </div>
         );
       case ModuleType.THREATS:
         return (
           <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div>
-              <ModuleHeader 
-                title="Threat Landscape" 
-                description="Identify the tactics, techniques, and procedures (TTPs) used by modern threat actors."
-              />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <ModuleCard title="Advanced Persistent Threats (APT)" icon={<Icons.Alert />}>
-                  High-level attackers who maintain long-term access to a network without being detected.
-                </ModuleCard>
-                <ModuleCard title="DDoS Attacks" icon={<Icons.Network />}>
-                  Distributed Denial of Service attempts to crash systems by flooding them with illegitimate traffic.
-                </ModuleCard>
-                <ModuleCard title="Insider Threats" icon={<Icons.Code />}>
-                  Disgruntled or negligent employees who compromise security from within the trusted network.
-                </ModuleCard>
-                <ModuleCard title="Supply Chain Attacks" icon={<Icons.Network />}>
-                  Attacking a third-party vendor to gain access to their larger customers.
-                </ModuleCard>
-              </div>
-            </div>
-
+            <ModuleHeader 
+              title="Threat Landscape" 
+              description="Identify the tactics, techniques, and procedures (TTPs) used by modern threat actors."
+            />
             <MalwareShowcase />
-
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 border-l-4 border-red-500 pl-4 py-1">
-                <h3 className="text-2xl font-bold text-white">Social Engineering Attacks</h3>
-                <span className="bg-red-500/20 text-red-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest">Psychological Vector</span>
-              </div>
-              <p className="text-slate-400 max-w-3xl">
-                Social engineering is the art of manipulating people into divulging confidential information. Unlike technical hacks, these exploit human psychology.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-slate-900 border border-slate-800 p-5 rounded-xl hover:border-red-500/50 transition-all group">
-                  <div className="text-red-400 mb-3 group-hover:scale-110 transition-transform"><Icons.Brain /></div>
-                  <h4 className="font-bold text-white mb-2">Phishing</h4>
-                  <p className="text-xs text-slate-400 leading-relaxed">Fraudulent communications to steal sensitive data.</p>
-                </div>
-                <div className="bg-slate-900 border border-slate-800 p-5 rounded-xl hover:border-red-500/50 transition-all group">
-                  <div className="text-red-400 mb-3 group-hover:scale-110 transition-transform"><Icons.Alert /></div>
-                  <h4 className="font-bold text-white mb-2">Pretexting</h4>
-                  <p className="text-xs text-slate-400 leading-relaxed">Fabricated scenarios to trick victims into leaking data.</p>
-                </div>
-                <div className="bg-slate-900 border border-slate-800 p-5 rounded-xl hover:border-red-500/50 transition-all group">
-                  <div className="text-red-400 mb-3 group-hover:scale-110 transition-transform"><Icons.Shield /></div>
-                  <h4 className="font-bold text-white mb-2">Tailgating</h4>
-                  <p className="text-xs text-slate-400 leading-relaxed">Gaining physical access by following authorized personnel.</p>
-                </div>
-                <div className="bg-slate-900 border border-slate-800 p-5 rounded-xl hover:border-red-500/50 transition-all group">
-                  <div className="text-red-400 mb-3 group-hover:scale-110 transition-transform"><Icons.Code /></div>
-                  <h4 className="font-bold text-white mb-2">Baiting</h4>
-                  <p className="text-xs text-slate-400 leading-relaxed">Piquing curiosity with false promises to deliver malware.</p>
-                </div>
-              </div>
-            </div>
           </div>
         );
       case ModuleType.DEFENSES:
@@ -185,70 +139,140 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-950 text-slate-100 selection:bg-blue-500/30">
-      <Sidebar activeModule={activeModule} setActiveModule={setActiveModule} />
-      <main className="flex-1 p-8 lg:p-12 overflow-y-auto">
-        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-16">
-          <div className="flex gap-6 items-start">
-            <div className="p-3 bg-white rounded-xl shadow-lg shadow-white/5 shrink-0 hidden md:block">
-               <Icons.KKULogo className="w-16 h-auto" />
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-                <span className="text-slate-500 font-bold uppercase text-[10px] tracking-[0.2em]">Live Academic Environment | KKU</span>
+    <BrowserFrame>
+      <div className="flex h-full bg-slate-950 text-slate-100 selection:bg-blue-500/30">
+        <Sidebar activeModule={activeModule} setActiveModule={setActiveModule} />
+        <main className="flex-1 p-8 lg:p-12 overflow-y-auto">
+          <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-16">
+            <div className="flex gap-6 items-start">
+              <div className="p-3 bg-white rounded-xl shadow-lg shadow-white/5 shrink-0 hidden md:block">
+                 <Icons.KKULogo className="w-16 h-auto" />
               </div>
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight text-white mb-1">
-                  Jahzia students | Computer Engineering
-                </h1>
-                <div className="flex flex-wrap items-center gap-2 text-blue-400 font-medium">
-                  <span className="text-sm">College of Computer Science</span>
-                  <span className="h-4 w-px bg-slate-800 mx-2"></span>
-                  <span className="text-sm">King Khalid University</span>
-                  <span className="h-4 w-px bg-slate-800 mx-2"></span>
-                  <span className="text-xs font-mono uppercase tracking-widest bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">CyberShield Workshop</span>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                  <span className="text-slate-500 font-bold uppercase text-[10px] tracking-[0.2em]">Live Academic Environment | KKU</span>
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold tracking-tight text-white mb-1">
+                    Jahzia students | Computer Engineering
+                  </h1>
+                  <div className="flex flex-wrap items-center gap-2 text-blue-400 font-medium">
+                    <span className="text-sm">College of Computer Science</span>
+                    <span className="h-4 w-px bg-slate-800 mx-2"></span>
+                    <span className="text-xs font-mono uppercase tracking-widest bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">CyberShield Workshop</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          
-          <div className="flex items-center gap-6 bg-slate-900/50 border border-slate-800 p-2 pl-4 rounded-2xl">
-             <div className="flex flex-col items-end">
-               <span className="text-[10px] text-slate-500 font-bold uppercase">Class Progress</span>
-               <span className="text-sm font-mono font-bold text-blue-400">{progress}%</span>
-             </div>
-             <div className="h-10 w-px bg-slate-800"></div>
-             <div className="flex -space-x-2">
-               {[1,2,3,4].map(n => (
-                 <div key={n} className="w-8 h-8 rounded-full border-2 border-slate-950 bg-slate-800 overflow-hidden">
-                   <img src={`https://api.dicebear.com/7.x/identicon/svg?seed=${n * 23 + 55}`} alt="trainee" />
+            
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setShowShareModal(true)}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-900 text-slate-300 font-bold text-sm hover:text-white hover:border-slate-600 transition-all shadow-lg"
+              >
+                <Icons.Share />
+                Frame & Share
+              </button>
+
+              <div className="flex items-center gap-6 bg-slate-900/50 border border-slate-800 p-2 pl-4 rounded-2xl">
+                 <div className="flex flex-col items-end">
+                   <span className="text-[10px] text-slate-500 font-bold uppercase">Class Progress</span>
+                   <span className="text-sm font-mono font-bold text-blue-400">{progress}%</span>
                  </div>
-               ))}
-               <div className="w-8 h-8 rounded-full bg-blue-600 border-2 border-slate-950 flex items-center justify-center text-[10px] text-white font-bold">+28</div>
-             </div>
-          </div>
-        </header>
-
-        <div className="max-w-6xl mx-auto">
-          {renderContent()}
-        </div>
-
-        <footer className="mt-24 pt-12 border-t border-slate-900 text-slate-600 text-xs flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-4">
-            <div className="p-1.5 bg-slate-900 rounded border border-slate-800">
-               <Icons.Shield />
+                 <div className="h-10 w-px bg-slate-800"></div>
+                 <div className="flex -space-x-2">
+                   {[1,2,3,4].map(n => (
+                     <div key={n} className="w-8 h-8 rounded-full border-2 border-slate-950 bg-slate-800 overflow-hidden">
+                       <img src={`https://api.dicebear.com/7.x/identicon/svg?seed=${n * 23 + 55}`} alt="trainee" />
+                     </div>
+                   ))}
+                   <div className="w-8 h-8 rounded-full bg-blue-600 border-2 border-slate-950 flex items-center justify-center text-[10px] text-white font-bold">+28</div>
+                 </div>
+              </div>
             </div>
-            <p>© 2024 Jahzia Workshop - College of Computer Science | King Khalid University. Facilitated by Dr. Omer Elsier Tayfour.</p>
+          </header>
+
+          <div className="max-w-6xl mx-auto">
+            {renderContent()}
           </div>
-          <div className="flex gap-8 font-bold uppercase tracking-widest text-[10px]">
-            <a href="#" className="hover:text-blue-500 transition-colors">KKU Portal</a>
-            <a href="#" className="hover:text-blue-500 transition-colors">Threat Database</a>
-            <a href="#" className="hover:text-blue-500 transition-colors">Encryption Lab</a>
+
+          <footer className="mt-24 pt-12 border-t border-slate-900 text-slate-600 text-xs flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex items-center gap-4">
+              <div className="p-1.5 bg-slate-900 rounded border border-slate-800">
+                 <Icons.Shield />
+              </div>
+              <p>© 2024 Jahzia Workshop - College of Computer Science | King Khalid University. Facilitated by Dr. Omer Elsier Tayfour.</p>
+            </div>
+          </footer>
+        </main>
+      </div>
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-sm bg-black/60">
+          <div className="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-8 border-b border-slate-800">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-2xl font-bold text-white">Workshop Framing</h3>
+                <button onClick={() => setShowShareModal(false)} className="text-slate-500 hover:text-white">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+              </div>
+              <p className="text-slate-400 text-sm">Deploy this workshop to your department portal or share the direct link with students.</p>
+            </div>
+            
+            <div className="p-8 space-y-6">
+              {/* Option 1: Link */}
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold uppercase text-slate-500 tracking-widest">Direct Deployment Link</label>
+                <div className="flex gap-2">
+                  <div className="flex-1 bg-slate-950 border border-slate-800 px-4 py-3 rounded-xl text-xs font-mono text-slate-400 truncate">
+                    {window.location.href}
+                  </div>
+                  <button 
+                    onClick={handleCopyLink}
+                    className={`px-4 rounded-xl font-bold text-xs transition-all ${
+                      copyStatus === 'link' ? 'bg-green-600 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    }`}
+                  >
+                    {copyStatus === 'link' ? 'Copied!' : 'Copy'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Option 2: Embed */}
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold uppercase text-slate-500 tracking-widest">LMS Embed Code (Iframe Frame)</label>
+                <div className="relative">
+                  <textarea 
+                    readOnly
+                    value={`<iframe src="${window.location.href}" width="100%" height="800px"></iframe>`}
+                    className="w-full bg-slate-950 border border-slate-800 p-4 rounded-xl text-[10px] font-mono text-blue-400 h-20 resize-none"
+                  />
+                  <button 
+                    onClick={handleCopyEmbed}
+                    className="absolute bottom-3 right-3 bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-slate-700"
+                  >
+                    {copyStatus === 'embed' ? 'Copied Embed!' : 'Copy Code'}
+                  </button>
+                </div>
+                <p className="text-[10px] text-slate-500 italic">Use this code to embed the workshop inside Blackboard or Moodle.</p>
+              </div>
+            </div>
+
+            <div className="bg-slate-950 p-6 flex justify-center">
+              <button 
+                onClick={() => setShowShareModal(false)}
+                className="text-slate-500 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors"
+              >
+                Close Panel
+              </button>
+            </div>
           </div>
-        </footer>
-      </main>
-    </div>
+        </div>
+      )}
+    </BrowserFrame>
   );
 };
 
