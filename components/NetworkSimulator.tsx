@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Icons } from '../constants';
 
@@ -128,7 +127,7 @@ const NetworkSimulator: React.FC = () => {
         <div className="text-green-500 mb-1">$ system monitor initialized...</div>
         {packets.map(p => (
           <div key={p.id} className={p.type === 'malicious' ? 'text-red-400' : 'text-blue-400'}>
-            [{new Date(p.id).toLocaleTimeString()}] IP 192.168.1.{Math.floor(Math.random() * 255)}: {p.type === 'good' ? 'DATA_TRANSFER' : 'MALICIOUS_REQUEST'} -> {p.status.toUpperCase()}
+            [{new Date(p.id).toLocaleTimeString()}] IP 192.168.1.{Math.floor(Math.random() * 255)}: {p.type === 'good' ? 'DATA_TRANSFER' : 'MALICIOUS_REQUEST'}{' -> '}{p.status.toUpperCase()}
           </div>
         ))}
       </div>
